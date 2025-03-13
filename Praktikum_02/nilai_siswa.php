@@ -36,7 +36,7 @@
     <main role="main" class="container mt-3">
         <h3>Form Penilaian Siswa</h3>
         <hr />
-        <form class="mx-auto" action="form_nilai_get.php" method="GET">
+        <form class="mx-auto" action="nilai_siswa.php" method="POST">
             <div class="form-group row">
                 <label for="nama" class="col-5 col-form-label font-weight-bold text-right">Nama Lengkap</label>
                 <div class="col-7">
@@ -82,19 +82,68 @@
             </div>
         </form>
         <?php
-        $proses = isset($_GET['proses']) ? $_GET['proses'] : "";
-        $nama = isset($_GET['nama']) ? $_GET['nama'] : "";
-        $mata_kuliah = isset($_GET['mata_kuliah']) ? $_GET['mata_kuliah'] : "";
-        $nilai_uts = isset($_GET['nilai_uts']) ? $_GET['nilai_uts'] : "";
-        $nilai_uas = isset($_GET['nilai_uas']) ? $_GET['nilai_uas'] : "";
-        $nilai_tugas = isset($_GET['nilai_tugas']) ? $_GET['nilai_tugas'] : "";
+        if(isset($_POST['proses'])) {
+        $proses= $_POST['proses'];
+        $nama_siswa = $_POST['nama'];
+        $mata_kuliah = $_POST['mata_kuliah'];
+        $nilai_uts = $_POST['nilai_uts'];
+        $nilai_uas = $_POST['nilai_uas'];
+        $nilai_tugas = $_POST['nilai_tugas'];
+        
+        $nilai_akhir = (0.3 * $nilai_uts) + (0.35 * $nilai_uas) + (0.35 * $nilai_tugas);
 
-        echo "proses :" . $proses;
-        echo "<br>nama :" . $nama;
-        echo "<br>mata_kuliah :" . $mata_kuliah;
-        echo "<br>nilai_uts :" . $nilai_uts;
-        echo "<br>nilai_uas :" . $nilai_uas;
-        echo "<br>nilai_tugas :" . $nilai_tugas;
+        if ($nilai_akhir >= 85) {
+            $grade = "A";
+        } elseif ($nilai_akhir >= 70) {
+            $grade = "B";
+        } elseif ($nilai_akhir >= 56) {
+            $grade = "C";
+        } elseif ($nilai_akhir >= 36) {
+            $grade = "D";
+        } elseif ($nilai_akhir >= 0) {
+            $grade = "E";
+        } else {
+            $grade = "I";
+        }
+
+        $status = ($grade == "A" || $grade == "B" || $grade == "C") ? "Lulus" : "Tidak Lulus";
+
+        switch ($grade) {
+            case "A":
+                $predikat = "Sangat Memuaskan";
+                break;
+            case "B":
+                $predikat = "Memuaskan";
+                break;
+            case "C":
+                $predikat = "Cukup";
+                break;
+            case "D":
+                $predikat = "Kurang";
+                break;
+            case "E":
+                $predikat = "Sangat Kurang";
+                break;
+            default:
+                $predikat = "Tidak Ada";
+                break;
+        }
+
+        echo '<div class="result-box">';
+        echo '<h4 class="mb-3">Hasil Penilaian</h4>';
+        echo '<table class="table table-bordered">';
+        echo '<tr><td width="30%">Nama</td><td>'.$nama_siswa.'</td></tr>';
+        echo '<tr><td>Mata Kuliah</td><td>'.$mata_kuliah.'</td></tr>';
+        echo '<tr><td>Nilai UTS</td><td>'.$nilai_uts.'</td></tr>';
+        echo '<tr><td>Nilai UAS</td><td>'.$nilai_uas.'</td></tr>';
+        echo '<tr><td>Nilai Tugas</td><td>'.$nilai_tugas.'</td></tr>';
+        echo '<tr><td>Nilai Akhir</td><td>'.number_format($nilai_akhir, 2).'</td></tr>';
+        echo '<tr><td>Grade</td><td>'.$grade.'</td></tr>';
+        echo '<tr><td>Status</td><td>'.$status.'</td></tr>';
+        echo '<tr><td>Predikat</td><td>'.$predikat.'</td></tr>';
+        echo '</table>';
+        echo '</div>';
+        }
         ?>
 
     </main>
